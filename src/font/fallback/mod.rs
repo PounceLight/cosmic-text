@@ -11,7 +11,7 @@ use crate::{Font, FontMatchKey, FontSystem, ShapePlanCache};
 
 use self::platform::*;
 
-#[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows",)))]
+/* #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows",)))]
 #[path = "other.rs"]
 mod platform;
 
@@ -25,6 +25,10 @@ mod platform;
 
 #[cfg(target_os = "windows")]
 #[path = "windows.rs"]
+mod platform; */
+
+// Force the same fallback on each platform
+#[path = "unix.rs"]
 mod platform;
 
 #[cfg(not(feature = "warn_on_missing_glyphs"))]
@@ -241,6 +245,7 @@ impl<'a> Iterator for FontFallbackIter<'a> {
             for m_key in font_match_keys_iter(false) {
                 if self.face_contains_family(m_key.id, common_family) {
                     if let Some(font) = self.font_system.get_font(m_key.id) {
+                        // log::debug!("Attempting 'common' fallback in family {:?}", common_family);
                         return Some(font);
                     }
                 }
@@ -259,6 +264,7 @@ impl<'a> Iterator for FontFallbackIter<'a> {
                 .all(|family_name| !self.face_contains_family(id, family_name))
             {
                 if let Some(font) = self.font_system.get_font(id) {
+                    // log::debug!("Attempting last-resort fallback in font {:?}", id);
                     return Some(font);
                 }
             }

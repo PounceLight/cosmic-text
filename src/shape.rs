@@ -262,8 +262,9 @@ fn shape_run(
         };
 
         log::trace!(
-            "Evaluating fallback with font '{}'",
-            font_iter.face_name(font.id())
+            "Evaluating fallback with font '{}' (ID {:?})",
+            font_iter.face_name(font.id()),
+            font.id()
         );
         let mut fb_glyphs = Vec::new();
         let fb_missing = shape_fallback(
@@ -277,6 +278,7 @@ fn shape_run(
             end_run,
             span_rtl,
         );
+        // log::trace!("{} missing glyphs left", fb_missing.len());
 
         // Insert all matching glyphs
         let mut fb_i = 0;
